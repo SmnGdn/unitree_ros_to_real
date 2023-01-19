@@ -5,7 +5,6 @@ add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED COMPONENTS
     roscpp
-    rospy
     geometry_msgs
     unitree_legged_msgs
 )
@@ -28,13 +27,7 @@ set(CMAKE_CXX_FLAGS "-O3 -fPIC")
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
-    ${CMAKE_SOURCE_DIR}/unitree_legged_sdk/include
-    ~/catkin_ws_unitree/src/unitree_legged_sdk/include/
-)
-
-catkin_install_python(PROGRAMS
-  scripts/teleop_twist_keyboard.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+    ${}/unitree_legged_sdk/include
 )
 
 

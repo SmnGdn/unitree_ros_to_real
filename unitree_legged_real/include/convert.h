@@ -63,7 +63,7 @@ UNITREE_LEGGED_SDK::HighCmd rosMsg2Cmd(const unitree_legged_msgs::HighCmd::Const
         cmd.wirelessRemote[i] = msg->wirelessRemote[i];
     }
 
-    cmd.levelFlag = msg->levelFlag;
+    cmd.levelFlag = 0;
     cmd.frameReserve = msg->frameReserve;
     cmd.bandWidth = msg->bandWidth;
     cmd.mode = msg->mode;

@@ -1,34 +1,80 @@
 #include "ros/ros.h"
 #include <geometry_msgs/Twist.h>
 #include <termios.h>
+#include <ctime>
+#include<unistd.h>
+#include<signal.h>
+#include <string>
+#include <time.h>
+
+// char getch() {
+//         char buf = 0;
+//         struct termios old = {0};
+//         if (tcgetattr(0, &old) < 0)
+//                 perror("tcsetattr()");
+//         old.c_lflag &= ~ICANON;
+//         old.c_lflag &= ~ECHO;
+//         old.c_cc[VMIN] = 1;
+//         old.c_cc[VTIME] = 0;
+//         if (tcsetattr(0, TCSANOW, &old) < 0)
+//                 perror("tcsetattr ICANON");
+//         if (read(0, &buf, 1) < 0)
+//                 perror ("read()");
+//         old.c_lflag |= ICANON;
+//         old.c_lflag |= ECHO;
+//         if (tcsetattr(0, TCSADRAIN, &old) < 0)
+//                 perror ("tcsetattr ~ICANON");
+//         return (buf);
+// }
+
 
 int getch()
 {
-	int ch;
-	struct termios oldt;
-	struct termios newt;
+    int ch;
+    struct termios oldt;
+    struct termios newt;
 
-	// Store old settings, and copy to new settings
-	tcgetattr(STDIN_FILENO, &oldt);
-	newt = oldt;
+    // Store old settings, and copy to new settings
+    tcgetattr(0, &oldt);
+    newt = oldt;
 
-	// Make required changes and apply the settings
-	newt.c_lflag &= ~(ICANON | ECHO);
-	newt.c_iflag |= IGNBRK;
-	newt.c_iflag &= ~(INLCR | ICRNL | IXON | IXOFF);
-	newt.c_lflag &= ~(ICANON | ECHO | ECHOK | ECHOE | ECHONL | ISIG | IEXTEN);
-	newt.c_cc[VMIN] = 0;
-	newt.c_cc[VTIME] = 1;
-	tcsetattr(fileno(stdin), TCSANOW, &newt);
+    // Make required changes and apply the settings
+    newt.c_lflag &= ~(ICANON | ECHO);
+    newt.c_iflag |= IGNBRK;
+    newt.c_iflag &= ~(INLCR | ICRNL | IXON | IXOFF);
+    newt.c_lflag &= ~(ICANON | ECHO | ECHOK | ECHOE | ECHONL | ISIG | IEXTEN);
+    newt.c_cc[VMIN] = 1;
+    newt.c_cc[VTIME] = 1;
+    tcsetattr(fileno(stdin), TCSANOW, &newt);
 
-	// Get the current character
-	ch = getchar();
+    // Get the current character
+    ch = getchar();
 
-	// Reapply old settings
-	tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
+    // Reapply old settings
+    tcsetattr(0, TCSANOW, &oldt);
 
-	return ch;
+    return ch;
 }
+
+// void sig_handler(int signum){
+//    printf("Inside handler function\n");
+//     signal(SIGALRM,sig_handler); // Register signal handler
+//     useconds_t first = 200000;
+//     useconds_t following = 200000;
+// }
+
+// char read_keyboard() {
+//     char key = 0;
+//     clock_t time_for_timeout(clock());
+//     clock_t time_now(clock());
+//     while ((float)(time_now - time_for_timeout)/CLOCKS_PER_SEC < 0.001){
+//         std::cout << (float)(time_now - time_for_timeout)/CLOCKS_PER_SEC << std::endl;
+//         signal(SIGALRM,sig_handler); // Register signal handler
+//         key = getchar();
+//         time_now = clock();
+//     }
+//     return key;
+// }
 
 int main(int argc, char **argv)
 {
@@ -44,6 +90,10 @@ int main(int argc, char **argv)
 
 	long count = 0;
 
+    // signal(SIGALRM,sig_handler); // Register signal handler
+    // useconds_t first = 200000;
+    // useconds_t following = 200000;
+
 	while (ros::ok())
 	{
 		twist.linear.x = 0.0;
@@ -53,9 +103,26 @@ int main(int argc, char **argv)
 		twist.angular.y = 0.0;
 		twist.angular.z = 0.0;
 
-		int ch = 0;
+		int ch = 0; int ch1 = 0;
+		// ch = read_keyboard();
 
-		ch = getch();
+        // ualarm(first, following);
+        int msec = 0, trigger = 2000; /* 100ms */
+        clock_t before = clock();
+
+        do {
+        /*
+        * Do something to busy the CPU just here while you drink a coffee
+        * Be sure this code will not take more than `trigger` ms
+        */
+        ch = getchar();
+        std::cout << ch << std::endl;
+        std::cout << msec << std::endl;
+        // ch = ch1.back;
+        clock_t difference = clock() - before;
+        msec = difference * 1000 / CLOCKS_PER_SEC;
+        } while ( msec < trigger );
+
 
 		printf("%ld\n", count++);
 		printf("ch = %d\n\n", ch);
@@ -101,7 +168,7 @@ int main(int argc, char **argv)
 			break;
 		}
 
-		pub.publish(twist);
+        pub.publish(twist);
 
 		ros::spinOnce();
 		loop_rate.sleep();
