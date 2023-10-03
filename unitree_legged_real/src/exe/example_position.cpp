@@ -37,13 +37,14 @@ int main(int argc, char **argv)
     low_cmd_ros.head[0] = 0xFE;
     low_cmd_ros.head[1] = 0xEF;
     low_cmd_ros.levelFlag = LOWLEVEL;
+    // ROS_INFO( "levelflag = %f ", low_cmd_ros.levelFlag)
 
     for (int i = 0; i < 12; i++)
     {
         low_cmd_ros.motorCmd[i].mode = 0x0A;  // motor switch to servo (PMSM) mode
-        low_cmd_ros.motorCmd[i].q = PosStopF; // 禁止位置环
+        low_cmd_ros.motorCmd[i].q = 2.146E+9f; // 禁止位置环
         low_cmd_ros.motorCmd[i].Kp = 0;
-        low_cmd_ros.motorCmd[i].dq = VelStopF; // 禁止速度环
+        low_cmd_ros.motorCmd[i].dq = 16000.f; // 禁止速度环
         low_cmd_ros.motorCmd[i].Kd = 0;
         low_cmd_ros.motorCmd[i].tau = 0;
     }
@@ -62,18 +63,18 @@ int main(int argc, char **argv)
 
             low_cmd_ros.motorCmd[FR_2].q = -M_PI / 2 + 0.5 * sin(2 * M_PI / 5.0 * motiontime * 1e-3);
             low_cmd_ros.motorCmd[FR_2].dq = 0.0;
-            low_cmd_ros.motorCmd[FR_2].Kp = 5.0;
-            low_cmd_ros.motorCmd[FR_2].Kd = 1.0;
+            low_cmd_ros.motorCmd[FR_2].Kp = 0.0;
+            low_cmd_ros.motorCmd[FR_2].Kd = 0.0;
 
             low_cmd_ros.motorCmd[FR_0].q = 0.0;
             low_cmd_ros.motorCmd[FR_0].dq = 0.0;
-            low_cmd_ros.motorCmd[FR_0].Kp = 5.0;
-            low_cmd_ros.motorCmd[FR_0].Kd = 1.0;
+            low_cmd_ros.motorCmd[FR_0].Kp = 0.0;
+            low_cmd_ros.motorCmd[FR_0].Kd = 0.0;
 
             low_cmd_ros.motorCmd[FR_1].q = 0.0;
             low_cmd_ros.motorCmd[FR_1].dq = 0.0;
-            low_cmd_ros.motorCmd[FR_1].Kp = 5.0;
-            low_cmd_ros.motorCmd[FR_1].Kd = 1.0;
+            low_cmd_ros.motorCmd[FR_1].Kp = 0.0;
+            low_cmd_ros.motorCmd[FR_1].Kd = 0.0;
         }
 
         count++;
