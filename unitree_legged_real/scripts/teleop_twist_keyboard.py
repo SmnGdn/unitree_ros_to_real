@@ -230,14 +230,14 @@ if __name__=="__main__":
             key = getKey(settings, key_timeout)
             if key in moveBindings.keys():
                 count = 0
-                print("Case 1 !! ")
+                # print("Case 1 !! ")
                 x = moveBindings[key][0]
                 y = moveBindings[key][1]
                 z = moveBindings[key][2]
                 th = moveBindings[key][3]
             elif key in speedBindings.keys():
                 count = 0
-                print("Case 2 !! ")
+                # print("Case 2 !! ")
                 speed = min(speed_limit, speed * speedBindings[key][0])
                 turn = min(turn_limit, turn * speedBindings[key][1])
                 if speed == speed_limit:
@@ -249,7 +249,7 @@ if __name__=="__main__":
                     print(msg)
                 status = (status + 1) % 15
             else:
-                print("Case 3 !! ")
+                # print("Case 3 !! ")
                 count +=1
                 # Skip updating cmd_vel if key timeout and robot already
                 # stopped.
